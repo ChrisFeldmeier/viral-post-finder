@@ -1,1 +1,5 @@
 *.csv
+*.json
+*.txt
+*id
+*.json.xz

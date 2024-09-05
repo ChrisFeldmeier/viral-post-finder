@@ -92,8 +92,17 @@ configure_proxy(proxy_url)
 
 ### 2. Running the Script
 To run the tool and scrape profiles for viral post analysis, execute the script:
+
+Info: Welche Instagram Account sind in der Python File definiert:
+
+Läd mit Instaloader Python die Profile und speichert sie in einer CSV Datei.
 ```bash
-python instagram_viral_finder.py
+python crawler_proxy_file.py
+```
+
+Läd mit Instaloader die Profile und speichert die Daten in JSON Dateien.
+```bash
+python crawler_proxy_download.py
 ```
 
 ### 3. Setting Instagram Accounts to Analyze
