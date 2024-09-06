@@ -5,6 +5,7 @@ import os
 import subprocess
 from datetime import datetime, timedelta
 from instaloader.exceptions import ProfileNotExistsException
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 def configure_proxy(proxy_url):
     """
@@ -48,7 +49,6 @@ def save_post_metadata_json(username):
     except subprocess.CalledProcessError as e:
         print(f"Error downloading post metadata for {username}: {e}")
 
-
 def getboth(posts_info, likesOnPosts, idsOnPosts, time_imported):  # return videos and images (including Reels)
     averageLikes = []
     for post in posts_info:
@@ -77,6 +77,7 @@ def getboth(posts_info, likesOnPosts, idsOnPosts, time_imported):  # return vide
 
     avgLikes = sum(averageLikes) / len(averageLikes) if averageLikes else 0
     return likesOnPosts, idsOnPosts, avgLikes
+
 def getphotos(posts_info, likesOnPosts, idsOnPosts, time_imported):  
     """Return only photos from the posts data."""
     averageLikes = []
@@ -198,7 +199,6 @@ def fetch_instagram_data(username, L, retries=10):
     print(f"Failed to fetch data for {username} after {retries} attempts.")
     return None, None
 
-
 def calculate_engagement_rate(posts_data, follower_count):
     """Calculates the engagement rate based on the last 16 images."""
     total_likes = sum(post['likes'] for post in posts_data)
@@ -300,8 +300,7 @@ def find_posts(username, bestposts, time_imported, csv_data, L, retries=10):
 
     return bestposts
 
-
-def export_to_csv(csv_data, filename="instagram_data_regular.csv"):
+def export_to_csv(csv_data, filename="instagram_data_parallel.csv"):
     """Exports all post data to a CSV file."""
     headers = [
         "Username", "Full Name", "Follower Count", "Following Count", "Total Posts",
@@ -335,8 +334,9 @@ while mediaType not in ["v", "b", "p"] or not time_imported.isdigit():
     time_imported, mediaType = run_intro()
 
 # Proxy configuration
-#proxy_url = "https://spww9ibbim:1Kuw7E3x0+beEltaIi@gate.smartproxy.com:7000"  # Replace with your residential proxy details
-proxy_url = "http://onlyvision:txLALvUvfiJkZnrY@mobile.proxyshare.io:2801"  # Replace with your residential proxy details
+proxy_url = "https://spww9ibbim:1Kuw7E3x0+beEltaIi@gate.smartproxy.com:7000"  # Replace with your residential proxy details
+
+#proxy_url = "https://gate.smartproxy.com:7000"  # Replace with your mobi proxy details
 
 configure_proxy(proxy_url)  # Set the proxy configuration for Instaloader
 
@@ -351,8 +351,10 @@ viralPostData = [["a", 0]] * 9  # Initialize with dummy data
 csv_data = []  # List to store all data for CSV export
 
 # Analyze each page for viral content
-for user in pageslist:
-    viralPostData = find_posts(user, viralPostData, time_imported, csv_data, L)
+with ThreadPoolExecutor(max_workers=5) as executor:
+    futures = [executor.submit(find_posts, user, viralPostData, time_imported, csv_data, L) for user in pageslist]
+    for future in as_completed(futures):
+        viralPostData = future.result()
 
 # Export data to CSV
 export_to_csv(csv_data)
