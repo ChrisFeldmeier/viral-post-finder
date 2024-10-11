@@ -334,7 +334,7 @@ while mediaType not in ["v", "b", "p"] or not time_imported.isdigit():
     time_imported, mediaType = run_intro()
 
 # Proxy configuration
-proxy_url = "https://spww9ibbim:1Kuw7E3x0+beEltaIi@gate.smartproxy.com:7000"  # Replace with your residential proxy details
+proxy_url = "https://youruser:youruser@gate.smartproxy.com:7000"  # Replace with your residential proxy details
 
 #proxy_url = "https://gate.smartproxy.com:7000"  # Replace with your mobi proxy details
 

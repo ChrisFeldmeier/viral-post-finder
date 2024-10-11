@@ -108,7 +108,7 @@ python crawler_proxy_download.py
 ### 3. Setting Instagram Accounts to Analyze
 In the script, you can specify the list of Instagram usernames to analyze:
 ```python
-pages_to_analyze = "wealth money.focus passionateincome"
+pages_to_analyze = "wealth passionateincome"
 ```
 This will analyze the specified profiles and detect viral posts for each one.
 
